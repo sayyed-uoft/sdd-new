@@ -76,14 +76,15 @@ class ConfigDialog(QDialog):
 
 
 class StartWindow(QMainWindow):
-    def __init__(self, camera = None, net = None, config = None):
+    def __init__(self, camera = None, net = None, config = None, image_width = 950):
         super().__init__()
         self.camera = camera
         self.net = net
         self.config = config
+        self.image_width = image_width
 
-        self.setFixedWidth(1145)
-        self.setFixedHeight(800)
+        self.setFixedWidth(image_width + 78)
+        self.setFixedHeight(780)
         
         self.central_widget = QWidget(self)
 
@@ -109,7 +110,7 @@ class StartWindow(QMainWindow):
 
         #self.label_image = QLabel(self.central_widget)
         self.image_view = PictureView(self.central_widget)
-        self.image_view.setGeometry(40,110,1067,600)
+        self.image_view.setGeometry(39,110,image_width,630)
         #self.image_view.hideAxis('left')
         #self.image_view.hideAxis('bottom')
         self.image_view.setStyleSheet("border :1px solid black;")
@@ -162,6 +163,7 @@ class StartWindow(QMainWindow):
         #print(height, width)
 
     def update_movie(self):
+        #print(self.camera.last_frame.shape)
         image_item = ImageItem(self.camera.last_frame)
         self.image_view.addItem(image_item)
         #self.image_view.setImage(self.camera.last_frame.T)

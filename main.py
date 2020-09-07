@@ -6,6 +6,8 @@ from network import Yolo3
 from view import StartWindow
 import cv2
 
+view_width = 1040
+
 # Initiliaze configuration
 print("Initialize ROI Configuration ...")
 config = ROIConfiguration('config.ini')
@@ -14,7 +16,7 @@ config.initialize()
 # Initiliaze camera
 print("Initialize Camera ...")
 #camera = Camera('example2.mp4')
-camera = Camera(0)
+camera = Camera(0, view_width)
 camera.initialize()
 
 # Initialize network
@@ -25,6 +27,6 @@ net.initialize("yolo3/")
 # Start the application
 print("Start Application ...")
 app = QApplication([])
-start_window = StartWindow(camera, net, config)
+start_window = StartWindow(camera, net, config, view_width)
 start_window.show()
 app.exit(app.exec_())

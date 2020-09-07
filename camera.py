@@ -1,19 +1,26 @@
 import numpy as np
-
 import cv2
 
 
 class Camera:
-    def __init__(self, cam_num):
+    def __init__(self, cam_num, view_width = None):
         self.cam_num = cam_num
+        self.view_width = view_width
         self.cap = None
         self.last_frame = np.zeros((1,1))
 
     def initialize(self):
         self.cap = cv2.VideoCapture(self.cam_num)
 
+    def resize_frame(self, frame, width):
+        (h, w) = frame.shape[:2]
+        h = int(width * h * 1.0 / w )
+        return cv2.resize(frame, (width, h), interpolation = cv2.INTER_AREA)
+
     def get_frame(self):
         ret, frame = self.cap.read()
+        if self.view_width:
+            frame = self.resize_frame(frame, self.view_width)
         return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     def acquire_movie(self, num_frames):
@@ -26,7 +33,8 @@ class Camera:
     def detect_in_movie(self, num_frames, net, config):
         for _ in range(num_frames):
             frame = net.detect_people(self.get_frame(), config)
-            self.last_frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+            frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+            self.last_frame = cv2.flip(frame, 0)
 
 
     def set_brightness(self, value):
